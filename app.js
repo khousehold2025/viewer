@@ -185,7 +185,28 @@ reader.readAsDataURL(file);
 
 // 컬러 변경
 
-document.getElementById("colorSelect").addEventListener("change",function(){
+//document.getElementById("colorSelect").addEventListener("change",function(){
+document.getElementById("colorPicker").addEventListener("input",function(){
+
+if(!modelMeshes.length) return;
+
+const color = BABYLON.Color3.FromHexString(this.value);
+
+modelMeshes.forEach(mesh=>{
+
+if(!mesh.material) return;
+
+if(mesh.material.albedoColor)
+mesh.material.albedoColor = color;
+
+if(mesh.material.diffuseColor)
+mesh.material.diffuseColor = color;
+
+});
+
+});
+
+//260313
 
 if(!modelMeshes.length)return;
 
@@ -214,5 +235,6 @@ if(mesh.material.diffuseColor)
 mesh.material.diffuseColor=selected;
 
 });
+
 
 });
