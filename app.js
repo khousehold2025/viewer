@@ -1,12 +1,33 @@
 const canvas = document.getElementById("renderCanvas");
-const engine = new BABYLON.Engine(canvas, true);
 
-const scene = new BABYLON.Scene(engine);
+const engine = new BABYLON.Engine(canvas,true);
 
-const camera = new BABYLON.ArcRotateCamera(
+let scene;
+let camera;
+
+let modelRoot=null;
+let modelMeshes=[];
+
+let sizeLabel;
+
+let gizmoManager;
+
+
+// 씬 생성
+
+const createScene=function(){
+
+scene=new BABYLON.Scene(engine);
+
+scene.clearColor=new BABYLON.Color4(0,0,0,0);
+
+
+// 카메라
+
+camera=new BABYLON.ArcRotateCamera(
 "camera",
 Math.PI/2,
-Math.PI/2.4,
+Math.PI/2.5,
 5,
 BABYLON.Vector3.Zero(),
 scene
@@ -14,35 +35,146 @@ scene
 
 camera.attachControl(canvas,true);
 
-const light = new BABYLON.HemisphericLight(
+camera.lowerRadiusLimit=0.5;
+camera.upperRadiusLimit=6;
+
+camera.wheelPrecision=50;
+
+
+// 조명
+
+new BABYLON.HemisphericLight(
 "light",
 new BABYLON.Vector3(0,1,0),
 scene
 );
 
-engine.runRenderLoop(function(){
+
+// GUI
+
+const advancedTexture=
+BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI");
+
+sizeLabel=new BABYLON.GUI.TextBlock();
+
+sizeLabel.color="white";
+sizeLabel.fontSize=20;
+
+sizeLabel.top="-45%";
+
+advancedTexture.addControl(sizeLabel);
+
+
+// Gizmo
+
+gizmoManager=new BABYLON.GizmoManager(scene);
+
+gizmoManager.scaleGizmoEnabled=true;
+
+return scene;
+
+};
+
+createScene();
+
+
+// 렌더 루프
+
+engine.runRenderLoop(()=>{
+
+if(modelRoot){
+
+const bounding=modelRoot.getHierarchyBoundingVectors();
+
+const size=bounding.max.subtract(bounding.min);
+
+sizeLabel.text=
+`가로: ${(size.x*100).toFixed(1)} cm   `+
+`세로: ${(size.z*100).toFixed(1)} cm   `+
+`높이: ${(size.y*100).toFixed(1)} cm`;
+
+}
+
 scene.render();
+
 });
 
-window.addEventListener("resize", function(){
-engine.resize();
+window.addEventListener("resize",()=>engine.resize());
+
+
+// GLB 로드
+
+document.getElementById("modelInput").addEventListener("change",async(event)=>{
+
+const file=event.target.files[0];
+
+if(!file)return;
+
+
+// 기존 모델 제거
+
+if(modelMeshes.length>0){
+
+modelMeshes.forEach(m=>m.dispose());
+
+modelMeshes=[];
+
+modelRoot=null;
+
+}
+
+
+const result=
+await BABYLON.SceneLoader.ImportMeshAsync(
+"",
+"",
+file,
+scene
+);
+
+modelMeshes=result.meshes;
+
+
+// 부모 Transform
+
+modelRoot=new BABYLON.TransformNode("modelRoot",scene);
+
+modelMeshes.forEach(mesh=>{
+
+if(mesh instanceof BABYLON.Mesh){
+
+mesh.setParent(modelRoot);
+
+}
+
 });
 
 
+// 카메라 프레이밍
 
-/* 배경 이미지 */
+camera.zoomOn(modelMeshes,true);
 
-document.getElementById("bgInput").addEventListener("change",function(e){
 
-const file = e.target.files[0];
-if(!file) return;
+// gizmo 연결
 
-const reader = new FileReader();
+gizmoManager.attachToNode(modelRoot);
 
-reader.onload = function(evt){
+});
 
-document.body.style.backgroundImage = "url("+evt.target.result+")";
-document.body.style.backgroundSize = "cover";
+
+// 배경 이미지
+
+document.getElementById("bgInput").addEventListener("change",(event)=>{
+
+const file=event.target.files[0];
+
+if(!file)return;
+
+const reader=new FileReader();
+
+reader.onload=(e)=>{
+
+document.body.style.backgroundImage=`url('${e.target.result}')`;
 
 };
 
@@ -51,40 +183,36 @@ reader.readAsDataURL(file);
 });
 
 
+// 컬러 변경
 
-/* GLB 로드 */
+document.getElementById("colorSelect").addEventListener("change",function(){
 
-document.getElementById("modelInput").addEventListener("change",function(e){
+if(!modelMeshes.length)return;
 
-const file = e.target.files[0];
-if(!file) return;
+const colorMap={
 
-const url = URL.createObjectURL(file);
+red:new BABYLON.Color3(1,0,0),
 
-BABYLON.SceneLoader.Append("", url, scene, function(){
+blue:new BABYLON.Color3(0,0,1),
 
-camera.zoomOn(scene.meshes);
+gray:new BABYLON.Color3(0.5,0.5,0.5),
 
-});
+black:new BABYLON.Color3(0.1,0.1,0.1)
 
-});
+};
 
+const selected=colorMap[this.value];
 
+modelMeshes.forEach(mesh=>{
 
-/* 컬러 변경 */
+if(!mesh.material)return;
 
-function setColor(color){
+if(mesh.material.albedoColor)
+mesh.material.albedoColor=selected;
 
-scene.meshes.forEach(function(mesh){
-
-if(mesh.material && mesh.material.albedoColor){
-
-if(color==="red") mesh.material.albedoColor = new BABYLON.Color3(1,0,0);
-if(color==="blue") mesh.material.albedoColor = new BABYLON.Color3(0,0,1);
-if(color==="gray") mesh.material.albedoColor = new BABYLON.Color3(0.5,0.5,0.5);
-
-}
+if(mesh.material.diffuseColor)
+mesh.material.diffuseColor=selected;
 
 });
 
-}
+});
