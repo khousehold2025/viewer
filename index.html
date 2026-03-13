@@ -11,15 +11,14 @@
 
 <style>
 
-html, body{
+html,body{
 width:100%;
 height:100%;
 margin:0;
 overflow:hidden;
+font-family:sans-serif;
 background-size:cover;
 background-position:center;
-background-repeat:no-repeat;
-font-family:sans-serif;
 }
 
 #renderCanvas{
@@ -32,17 +31,33 @@ display:block;
 position:absolute;
 top:20px;
 left:20px;
-z-index:10;
-background:rgba(255,255,255,0.9);
+background:white;
 padding:15px;
-border-radius:8px;
+border-radius:10px;
+z-index:10;
+box-shadow:0 5px 20px rgba(0,0,0,0.2);
 }
 
-select,input{
-margin-top:5px;
+.swatches{
+display:flex;
+gap:10px;
+margin-top:10px;
+}
+
+.swatch{
+width:28px;
+height:28px;
+border-radius:50%;
+cursor:pointer;
+border:2px solid #ccc;
+}
+
+.swatch.active{
+border:3px solid black;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -64,21 +79,19 @@ margin-top:5px;
 <br>
 
 <div>
-<label>컬러 변경</label><br>
-  
-//<select id="colorSelect">
-//<option value="">기본</option>
-//<option value="red">레드</option>
-//<option value="blue">블루</option>
-//<option value="gray">그레이</option>
-//<option value="black">블랙</option>
-//</select>
 
-  <label>컬러 선택</label><br>
-<input type="color" id="colorPicker" value="#888888">
+<label>색상 선택</label>
 
+<div class="swatches">
 
-  
+<div class="swatch" data-color="#EAE6DC" style="background:#EAE6DC"></div>
+<div class="swatch" data-color="#C9A889" style="background:#C9A889"></div>
+<div class="swatch" data-color="#6B4E3D" style="background:#6B4E3D"></div>
+<div class="swatch" data-color="#2E2E2E" style="background:#2E2E2E"></div>
+<div class="swatch" data-color="#B23A3A" style="background:#B23A3A"></div>
+
+</div>
+
 </div>
 
 </div>
@@ -88,5 +101,4 @@ margin-top:5px;
 <script src="app.js"></script>
 
 </body>
-
 </html>
