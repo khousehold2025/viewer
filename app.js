@@ -43,26 +43,29 @@ engine.resize();
 });
 
 
-
 /* -------------------------
 배경 이미지
 --------------------------*/
 
-document.getElementById("bgInput").addEventListener("change",function(e){
+document.getElementById("bgInput").addEventListener("change", function(e){
 
 const file = e.target.files[0];
-if(!file) return;
+
+if(!file){
+return;
+}
 
 const reader = new FileReader();
 
 reader.onload = function(evt){
-document.body.style.backgroundImage = `url(${evt.target.result})`;
+
+document.body.style.backgroundImage = "url(" + evt.target.result + ")";
+
 };
 
 reader.readAsDataURL(file);
 
 });
-
 
 
 /* -------------------------
@@ -72,22 +75,28 @@ GLB 로드
 document.getElementById("modelInput").addEventListener("change", async function(e){
 
 const file = e.target.files[0];
-if(!file) return;
 
-scene.meshes.forEach(m=>{
-if(m.name!=="__root__") m.dispose();
+if(!file){
+return;
+}
+
+scene.meshes.forEach(function(m){
+
+if(m.name !== "__root__"){
+m.dispose();
+}
+
 });
 
 const url = URL.createObjectURL(file);
 
-const result = await BABYLON.SceneLoader.AppendAsync("", url, scene);
+await BABYLON.SceneLoader.AppendAsync("", url, scene);
 
 modelMeshes = scene.meshes;
 
 camera.zoomOn(scene.meshes);
 
 });
-
 
 
 /* -------------------------
@@ -98,29 +107,35 @@ function applyColor(hex){
 
 const color = BABYLON.Color3.FromHexString(hex);
 
-scene.meshes.forEach(mesh=>{
+scene.meshes.forEach(function(mesh){
 
-if(!mesh.material) return;
+if(!mesh.material){
+return;
+}
 
-if(mesh.material.albedoColor)
+if(mesh.material.albedoColor){
 mesh.material.albedoColor = color;
+}
 
-if(mesh.material.diffuseColor)
+if(mesh.material.diffuseColor){
 mesh.material.diffuseColor = color;
+}
 
 });
 
 }
 
 
-
 const swatches = document.querySelectorAll(".swatch");
 
-swatches.forEach(s=>{
+swatches.forEach(function(s){
 
-s.addEventListener("click",function(){
+s.addEventListener("click", function(){
 
-swatches.forEach(b=>b.classList.remove("active"));
+swatches.forEach(function(b){
+b.classList.remove("active");
+});
+
 this.classList.add("active");
 
 applyColor(this.dataset.color);
