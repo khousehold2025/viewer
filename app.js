@@ -1,15 +1,9 @@
 const canvas = document.getElementById("renderCanvas");
 const engine = new BABYLON.Engine(canvas, true);
 
-let scene;
-let camera;
-let modelMeshes = [];
+const scene = new BABYLON.Scene(engine);
 
-function createScene(){
-
-scene = new BABYLON.Scene(engine);
-
-camera = new BABYLON.ArcRotateCamera(
+const camera = new BABYLON.ArcRotateCamera(
 "camera",
 Math.PI/2,
 Math.PI/2.4,
@@ -20,19 +14,11 @@ scene
 
 camera.attachControl(canvas,true);
 
-camera.lowerRadiusLimit = 0.5;
-camera.upperRadiusLimit = 10;
-camera.wheelPrecision = 50;
-
-new BABYLON.HemisphericLight(
+const light = new BABYLON.HemisphericLight(
 "light",
 new BABYLON.Vector3(0,1,0),
 scene
 );
-
-}
-
-createScene();
 
 engine.runRenderLoop(function(){
 scene.render();
@@ -43,23 +29,20 @@ engine.resize();
 });
 
 
-/* -------------------------
-배경 이미지
---------------------------*/
 
-document.getElementById("bgInput").addEventListener("change", function(e){
+/* 배경 이미지 */
+
+document.getElementById("bgInput").addEventListener("change",function(e){
 
 const file = e.target.files[0];
-
-if(!file){
-return;
-}
+if(!file) return;
 
 const reader = new FileReader();
 
 reader.onload = function(evt){
 
-document.body.style.backgroundImage = "url(" + evt.target.result + ")";
+document.body.style.backgroundImage = "url("+evt.target.result+")";
+document.body.style.backgroundSize = "cover";
 
 };
 
@@ -68,78 +51,40 @@ reader.readAsDataURL(file);
 });
 
 
-/* -------------------------
-GLB 로드
---------------------------*/
 
-document.getElementById("modelInput").addEventListener("change", async function(e){
+/* GLB 로드 */
+
+document.getElementById("modelInput").addEventListener("change",function(e){
 
 const file = e.target.files[0];
-
-if(!file){
-return;
-}
-
-scene.meshes.forEach(function(m){
-
-if(m.name !== "__root__"){
-m.dispose();
-}
-
-});
+if(!file) return;
 
 const url = URL.createObjectURL(file);
 
-await BABYLON.SceneLoader.AppendAsync("", url, scene);
-
-modelMeshes = scene.meshes;
+BABYLON.SceneLoader.Append("", url, scene, function(){
 
 camera.zoomOn(scene.meshes);
 
 });
 
+});
 
-/* -------------------------
-컬러 변경
---------------------------*/
 
-function applyColor(hex){
 
-const color = BABYLON.Color3.FromHexString(hex);
+/* 컬러 변경 */
+
+function setColor(color){
 
 scene.meshes.forEach(function(mesh){
 
-if(!mesh.material){
-return;
-}
+if(mesh.material && mesh.material.albedoColor){
 
-if(mesh.material.albedoColor){
-mesh.material.albedoColor = color;
-}
+if(color==="red") mesh.material.albedoColor = new BABYLON.Color3(1,0,0);
+if(color==="blue") mesh.material.albedoColor = new BABYLON.Color3(0,0,1);
+if(color==="gray") mesh.material.albedoColor = new BABYLON.Color3(0.5,0.5,0.5);
 
-if(mesh.material.diffuseColor){
-mesh.material.diffuseColor = color;
 }
 
 });
 
 }
-
-
-const swatches = document.querySelectorAll(".swatch");
-
-swatches.forEach(function(s){
-
-s.addEventListener("click", function(){
-
-swatches.forEach(function(b){
-b.classList.remove("active");
-});
-
-this.classList.add("active");
-
-applyColor(this.dataset.color);
-
-});
-
-});
