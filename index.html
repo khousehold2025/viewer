@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-
 <meta charset="utf-8">
-<title>K-Household 3D Viewer</title>
+<title>Babylon Sofa Viewer</title>
 
 <script src="https://cdn.babylonjs.com/babylon.js"></script>
 <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
@@ -15,44 +14,27 @@ width:100%;
 height:100%;
 margin:0;
 overflow:hidden;
-font-family:sans-serif;
-background-size:cover;
-background-position:center;
+background:#ffffff;
 }
 
 #renderCanvas{
 width:100%;
 height:100%;
-display:block;
+touch-action:none;
 }
 
-#uiPanel{
+#ui{
 position:absolute;
 top:20px;
 left:20px;
 background:white;
-padding:15px;
-border-radius:10px;
-box-shadow:0 10px 20px rgba(0,0,0,0.2);
-z-index:10;
+padding:10px;
+border-radius:8px;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
 
-.swatches{
-display:flex;
-gap:10px;
-margin-top:10px;
-}
-
-.swatch{
-width:26px;
-height:26px;
-border-radius:50%;
-cursor:pointer;
-border:2px solid #ccc;
-}
-
-.swatch.active{
-border:3px solid black;
+button{
+margin:3px;
 }
 
 </style>
@@ -60,46 +42,35 @@ border:3px solid black;
 
 <body>
 
-<div id="uiPanel">
+<div id="ui">
 
 <div>
-<label>배경 이미지</label><br>
-<input type="file" id="bgInput" accept="image/*">
+배경 이미지<br>
+<input type="file" id="bgInput">
 </div>
 
 <br>
 
 <div>
-<label>GLB 모델</label><br>
-<input type="file" id="modelInput" accept=".glb">
+GLB 모델<br>
+<input type="file" id="modelInput">
 </div>
 
 <br>
 
 <div>
-
-<label>색상 선택---</label>
-
-<div class="swatches">
-
-<div class="swatch" data-color="#EAE6DC" style="background:#EAE6DC"></div>
-<div class="swatch" data-color="#C9A889" style="background:#C9A889"></div>
-<div class="swatch" data-color="#6B4E3D" style="background:#6B4E3D"></div>
-<div class="swatch" data-color="#2E2E2E" style="background:#2E2E2E"></div>
-<div class="swatch" data-color="#B23A3A" style="background:#B23A3A"></div>
-
-</div>
-
+색상
+<br>
+<button onclick="setColor('red')">Red</button>
+<button onclick="setColor('blue')">Blue</button>
+<button onclick="setColor('gray')">Gray</button>
 </div>
 
 </div>
 
 <canvas id="renderCanvas"></canvas>
 
-<script src="./app.js"></script>
+<script src="app.js"></script>
 
 </body>
 </html>
-
-
-
