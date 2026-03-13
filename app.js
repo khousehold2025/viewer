@@ -215,7 +215,6 @@ mesh.material.diffuseColor=selected;
 
 });
 
-});
 
 /* 컬러 선택 */
 
@@ -239,5 +238,6 @@ mesh.material.albedoColor = color;
 });
 
 });
+
 
 
