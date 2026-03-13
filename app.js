@@ -54,7 +54,6 @@ return scene;
 
 createScene();
 
-
 engine.runRenderLoop(()=>{
 
 if(modelRoot){
@@ -76,7 +75,7 @@ scene.render();
 window.addEventListener("resize",()=>engine.resize());
 
 
-// GLB 로드
+// GLB 로드 (안정 버전)
 
 document.getElementById("modelInput").addEventListener("change",async(event)=>{
 
@@ -91,20 +90,18 @@ modelRoot=null;
 
 }
 
-const result=await BABYLON.SceneLoader.ImportMeshAsync("", "", file, scene);
+const url=URL.createObjectURL(file);
+
+const result=await BABYLON.SceneLoader.ImportMeshAsync("", url, "", scene);
 
 modelMeshes=result.meshes;
 
 modelRoot=new BABYLON.TransformNode("modelRoot",scene);
 
 modelMeshes.forEach(mesh=>{
-
 if(mesh instanceof BABYLON.Mesh){
-
 mesh.setParent(modelRoot);
-
 }
-
 });
 
 camera.zoomOn(modelMeshes,true);
@@ -123,9 +120,7 @@ if(!file) return;
 const reader=new FileReader();
 
 reader.onload=(e)=>{
-
 document.body.style.backgroundImage=`url('${e.target.result}')`;
-
 };
 
 reader.readAsDataURL(file);
@@ -133,7 +128,7 @@ reader.readAsDataURL(file);
 });
 
 
-// 색상 적용 함수
+// 색상 적용
 
 function applyColor(hex){
 
@@ -145,24 +140,18 @@ modelMeshes.forEach(mesh=>{
 
 if(!mesh.material) return;
 
-if(mesh.material instanceof BABYLON.PBRMaterial){
-
+if(mesh.material.albedoColor)
 mesh.material.albedoColor=color;
 
-}
-
-else if(mesh.material.diffuseColor){
-
+if(mesh.material.diffuseColor)
 mesh.material.diffuseColor=color;
-
-}
 
 });
 
 }
 
 
-// 스와치 이벤트
+// 스와치
 
 const swatches=document.querySelectorAll(".swatch");
 
@@ -173,9 +162,7 @@ swatch.addEventListener("click",function(){
 swatches.forEach(s=>s.classList.remove("active"));
 this.classList.add("active");
 
-const color=this.dataset.color;
-
-applyColor(color);
+applyColor(this.dataset.color);
 
 });
 
