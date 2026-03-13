@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8">
+<title>K-Household 3D Viewer</title>
+
+<script src="https://cdn.babylonjs.com/babylon.js"></script>
+<script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+<script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
+
+<style>
+
+html, body{
+width:100%;
+height:100%;
+margin:0;
+overflow:hidden;
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+font-family:sans-serif;
+}
+
+#renderCanvas{
+width:100%;
+height:100%;
+display:block;
+}
+
+#uiPanel{
+position:absolute;
+top:20px;
+left:20px;
+z-index:10;
+background:rgba(255,255,255,0.9);
+padding:15px;
+border-radius:8px;
+}
+
+select,input{
+margin-top:5px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="uiPanel">
+
+<div>
+<label>배경 이미지</label><br>
+<input type="file" id="bgInput" accept="image/*">
+</div>
+
+<br>
+
+<div>
+<label>GLB 모델</label><br>
+<input type="file" id="modelInput" accept=".glb">
+</div>
+
+<br>
+
+<div>
+<label>컬러 변경</label><br>
+<select id="colorSelect">
+<option value="">기본</option>
+<option value="red">레드</option>
+<option value="blue">블루</option>
+<option value="gray">그레이</option>
+<option value="black">블랙</option>
+</select>
+</div>
+
+</div>
+
+<canvas id="renderCanvas"></canvas>
+
+<script src="app.js"></script>
+
+</body>
+</html>
