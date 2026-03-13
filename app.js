@@ -215,29 +215,4 @@ mesh.material.diffuseColor=selected;
 
 });
 
-
-/* 컬러 선택 */
-
-const colorButtons = document.querySelectorAll(".colorBtn");
-
-colorButtons.forEach(function(btn){
-
-btn.addEventListener("click", function(){
-
-const hex = this.dataset.color;
-const color = BABYLON.Color3.FromHexString(hex);
-
-scene.meshes.forEach(function(mesh){
-
-if(mesh.material && mesh.material.albedoColor){
-
-mesh.material.albedoColor = color;
-
-}
-
 });
-
-});
-
-
-
