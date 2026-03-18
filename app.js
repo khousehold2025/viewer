@@ -19,6 +19,7 @@ const createScene=function(){
 
 scene=new BABYLON.Scene(engine);
 
+// 🔥 배경 보이게 (중요)
 scene.clearColor=new BABYLON.Color4(0,0,0,0);
 
 
@@ -102,35 +103,44 @@ scene.render();
 window.addEventListener("resize",()=>engine.resize());
 
 
-// GLB 로드
+// =============================
+// 🔥 공통 모델 로드 함수 (추가)
+// =============================
 
-document.getElementById("modelInput").addEventListener("change",async(event)=>{
-
-const file=event.target.files[0];
-
-if(!file)return;
-
+async function loadModel(source){
 
 // 기존 모델 제거
-
 if(modelMeshes.length>0){
 
 modelMeshes.forEach(m=>m.dispose());
 
 modelMeshes=[];
-
 modelRoot=null;
 
 }
 
+let result;
 
-const result=
-await BABYLON.SceneLoader.ImportMeshAsync(
+// 파일 업로드인지 URL인지 구분
+if(source instanceof File){
+
+result = await BABYLON.SceneLoader.ImportMeshAsync(
 "",
 "",
-file,
+source,
 scene
 );
+
+}else{
+
+result = await BABYLON.SceneLoader.ImportMeshAsync(
+"",
+"",
+source,
+scene
+);
+
+}
 
 modelMeshes=result.meshes;
 
@@ -142,9 +152,7 @@ modelRoot=new BABYLON.TransformNode("modelRoot",scene);
 modelMeshes.forEach(mesh=>{
 
 if(mesh instanceof BABYLON.Mesh){
-
 mesh.setParent(modelRoot);
-
 }
 
 });
@@ -159,10 +167,43 @@ camera.zoomOn(modelMeshes,true);
 
 gizmoManager.attachToNode(modelRoot);
 
+}
+
+
+
+// =============================
+// GLB 업로드 (기존 유지 + 수정)
+// =============================
+
+document.getElementById("modelInput").addEventListener("change",async(event)=>{
+
+const file=event.target.files[0];
+
+if(!file)return;
+
+await loadModel(file);
+
 });
 
 
+// =============================
+// 🔥 models 폴더 선택 (추가)
+// =============================
+
+document.getElementById("modelSelect").addEventListener("change",function(){
+
+if(!this.value)return;
+
+const url="models/"+this.value;
+
+loadModel(url);
+
+});
+
+
+// =============================
 // 배경 이미지
+// =============================
 
 document.getElementById("bgInput").addEventListener("change",(event)=>{
 
@@ -183,7 +224,9 @@ reader.readAsDataURL(file);
 });
 
 
+// =============================
 // 컬러 변경
+// =============================
 
 document.getElementById("colorSelect").addEventListener("change",function(){
 
