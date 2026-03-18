@@ -39,7 +39,7 @@ camera.attachControl(canvas,true);
 camera.lowerRadiusLimit=0.5;
 //camera.upperRadiusLimit=6;
   //좀더 멀리 줌아웃 15
-camera.upperRadiusLimit=15;
+camera.upperRadiusLimit=25;
 camera.wheelPrecision=50;
 
 
