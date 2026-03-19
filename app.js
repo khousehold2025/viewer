@@ -11,7 +11,7 @@ let objects = [];          // 🔥 추가 (여러 모델 관리)
 let selectedMesh = null;   // 🔥 추가
 
 let sizeLabel;
-let gizmoManager;
+//let gizmoManager;
   let boundingBoxGizmo;
 
 // 씬 생성
@@ -117,12 +117,14 @@ picked = picked.parent;
 }
 
 selectedMesh = picked;
-gizmoManager.attachToMesh(selectedMesh);
+//gizmoManager.attachToMesh(selectedMesh);
+  boundingBoxGizmo.attachedMesh = selectedMesh;
 
 }else{
 
 selectedMesh = null;
-gizmoManager.attachToMesh(null);
+//gizmoManager.attachToMesh(null);
+  boundingBoxGizmo.attachedMesh = selectedMesh;
 
 }
 
@@ -206,7 +208,8 @@ objects.push(root);
 
 // 마지막 추가된 것 선택
 selectedMesh = root;
-gizmoManager.attachToMesh(selectedMesh);
+//gizmoManager.attachToMesh(selectedMesh);
+  boundingBoxGizmo.attachedMesh = selectedMesh;
 
 // 카메라 프레이밍
 camera.zoomOn(result.meshes,true);
@@ -254,7 +257,8 @@ objects = objects.filter(o=>o !== selectedMesh);
 
 selectedMesh = null;
 
-gizmoManager.attachToMesh(null);
+//gizmoManager.attachToMesh(null);
+  boundingBoxGizmo.attachedMesh = null;
 
 });
 
