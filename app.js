@@ -12,12 +12,23 @@ let selectedMesh = null;   // 🔥 추가
 
 let sizeLabel;
 let gizmoManager;
-
+  let boundingBoxGizmo;
 
 // 씬 생성
 const createScene=function(){
 
 scene=new BABYLON.Scene(engine);
+
+// 🔥 여기부터 추가
+boundingBoxGizmo = new BABYLON.BoundingBoxGizmo(
+BABYLON.Color3.White(),
+scene
+);
+
+boundingBoxGizmo.scaleBoxSize = 0.02;
+boundingBoxGizmo.rotationSphereSize = 0.03;
+// 🔥 여기까지
+  
 
 // 🔥 배경 보이게 (중요)
 scene.clearColor=new BABYLON.Color4(0,0,0,0);
@@ -62,7 +73,12 @@ advancedTexture.addControl(sizeLabel);
 
 
 // Gizmo
-gizmoManager=new BABYLON.GizmoManager(scene);
+
+
+
+
+  
+//gizmoManager=new BABYLON.GizmoManager(scene);
 
 //const boundingBoxGizmo = new BABYLON.BoundingBoxGizmo(
 //BABYLON.Color3.White(),
@@ -72,10 +88,10 @@ gizmoManager=new BABYLON.GizmoManager(scene);
 //boundingBoxGizmo.scaleBoxSize = 0.02;
 //boundingBoxGizmo.rotationSphereSize = 0.03;  
 
-gizmoManager.scaleGizmoEnabled=true;
-gizmoManager.positionGizmoEnabled=true;
+//gizmoManager.scaleGizmoEnabled=true;
+//gizmoManager.positionGizmoEnabled=true;
 
-gizmoManager.attachToMesh(null);
+//gizmoManager.attachToMesh(null);
 //boundingBoxGizmo.attachedMesh = selectedMesh;
 
 // =============================
