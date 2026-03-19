@@ -62,7 +62,15 @@ advancedTexture.addControl(sizeLabel);
 
 
 // Gizmo
-gizmoManager=new BABYLON.GizmoManager(scene);
+//gizmoManager=new BABYLON.GizmoManager(scene);
+
+const boundingBoxGizmo = new BABYLON.BoundingBoxGizmo(
+BABYLON.Color3.White(),
+scene
+);
+
+boundingBoxGizmo.scaleBoxSize = 0.02;
+boundingBoxGizmo.rotationSphereSize = 0.03;  
 
 gizmoManager.scaleGizmoEnabled=true;
 gizmoManager.positionGizmoEnabled=true;
