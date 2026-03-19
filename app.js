@@ -12,17 +12,23 @@ let selectedMesh = null;   // 🔥 추가
 
 let sizeLabel;
 //let gizmoManager;
-  let boundingBoxGizmo;
+
+let boundingBoxGizmo;
+let utilLayer;
 
 // 씬 생성
 const createScene=function(){
 
 scene=new BABYLON.Scene(engine);
 
+
+utilLayer = new BABYLON.UtilityLayerRenderer(scene);
+  
 // 🔥 여기부터 추가
 boundingBoxGizmo = new BABYLON.BoundingBoxGizmo(
 BABYLON.Color3.White(),
-scene
+//scene
+  utilLayer
 );
 
 boundingBoxGizmo.scaleBoxSize = 0.02;
