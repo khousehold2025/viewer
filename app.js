@@ -72,11 +72,11 @@ scene
 boundingBoxGizmo.scaleBoxSize = 0.02;
 boundingBoxGizmo.rotationSphereSize = 0.03;  
 
-gizmoManager.scaleGizmoEnabled=true;
-gizmoManager.positionGizmoEnabled=true;
+//gizmoManager.scaleGizmoEnabled=true;
+//gizmoManager.positionGizmoEnabled=true;
 
-gizmoManager.attachToMesh(null);
-
+//gizmoManager.attachToMesh(null);
+boundingBoxGizmo.attachedMesh = selectedMesh;
 
 // =============================
 // 🔥 클릭 선택 추가
@@ -127,7 +127,7 @@ const bounding=selectedMesh.getHierarchyBoundingVectors();
 const size=bounding.max.subtract(bounding.min);
 
 sizeLabel.text=
-`가로: ${(size.x*100).toFixed(1)} cm   `+
+`-가로: ${(size.x*100).toFixed(1)} cm   `+
 `세로: ${(size.z*100).toFixed(1)} cm   `+
 `높이: ${(size.y*100).toFixed(1)} cm`;
 
