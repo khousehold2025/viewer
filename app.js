@@ -15,7 +15,7 @@ let sizeLabel;
 
 let boundingBoxGizmo;
 let utilLayer;
-
+let positionGizmo;
 // 씬 생성
 const createScene=function(){
 
@@ -23,6 +23,9 @@ scene=new BABYLON.Scene(engine);
 
 
 utilLayer = new BABYLON.UtilityLayerRenderer(scene);
+
+// 이동용
+positionGizmo = new BABYLON.PositionGizmo(utilLayer);
   
 // 🔥 여기부터 추가
 boundingBoxGizmo = new BABYLON.BoundingBoxGizmo(
@@ -125,13 +128,13 @@ picked = picked.parent;
 selectedMesh = picked;
 //gizmoManager.attachToMesh(selectedMesh);
   boundingBoxGizmo.attachedMesh = selectedMesh;
-
+positionGizmo.attachedMesh = selectedMesh;
 }else{
 
 selectedMesh = null;
 //gizmoManager.attachToMesh(null);
   boundingBoxGizmo.attachedMesh = selectedMesh;
-
+positionGizmo.attachedMesh = selectedMesh;
 }
 
 }
@@ -216,7 +219,7 @@ objects.push(root);
 selectedMesh = root;
 //gizmoManager.attachToMesh(selectedMesh);
   boundingBoxGizmo.attachedMesh = selectedMesh;
-
+positionGizmo.attachedMesh = selectedMesh;
 // 카메라 프레이밍
 camera.zoomOn(result.meshes,true);
 
@@ -265,7 +268,7 @@ selectedMesh = null;
 
 //gizmoManager.attachToMesh(null);
   boundingBoxGizmo.attachedMesh = null;
-
+positionGizmo.attachedMesh = null;
 });
 
 
