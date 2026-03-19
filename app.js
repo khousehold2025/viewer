@@ -4,9 +4,9 @@ const engine = new BABYLON.Engine(canvas,true);
 
 let scene;
 let camera;
-
+let objects = [];
 let modelRoot=null;
-let modelMeshes=[];
+//let modelMeshes=[];
 
 let sizeLabel;
 
@@ -15,9 +15,13 @@ let gizmoManager;
 
 // 씬 생성
 
-const createScene=function(){
+const createScene = async function(){
 
-scene=new BABYLON.Scene(engine);
+scene = new BABYLON.Scene(engine);
+
+
+
+camera.attachControl(canvas, true);
 
 // 🔥 배경 보이게 (중요)
 scene.clearColor=new BABYLON.Color4(0,0,0,0);
@@ -25,12 +29,22 @@ scene.clearColor=new BABYLON.Color4(0,0,0,0);
 
 // 카메라
 
-camera=new BABYLON.ArcRotateCamera(
+//camera=new BABYLON.ArcRotateCamera(
+//"camera",
+//Math.PI/2,
+//Math.PI/2.5,
+//5,
+//BABYLON.Vector3.Zero(),
+//scene
+//);
+
+
+  camera = new BABYLON.ArcRotateCamera(
 "camera",
-Math.PI/2,
-Math.PI/2.5,
-5,
-BABYLON.Vector3.Zero(),
+-Math.PI/2,
+Math.PI/2.3,
+8,
+new BABYLON.Vector3(0,1,0),
 scene
 );
 
@@ -69,15 +83,128 @@ advancedTexture.addControl(sizeLabel);
 
 // Gizmo
 
-gizmoManager=new BABYLON.GizmoManager(scene);
+//gizmoManager=new BABYLON.GizmoManager(scene);
 
-gizmoManager.scaleGizmoEnabled=true;
+//gizmoManager.scaleGizmoEnabled=true;
+
+//return scene;
+
+//};
+
+//createScene();
+
+gizmoManager = new BABYLON.GizmoManager(scene);
+
+gizmoManager.positionGizmoEnabled = true;
+gizmoManager.scaleGizmoEnabled = true;
+
+gizmoManager.attachToMesh(null);
+// 클릭 선택 
+  scene.onPointerObservable.add((pointerInfo)=>{
+
+if(pointerInfo.type === BABYLON.PointerEventTypes.POINTERDOWN){
+
+const pick = scene.pick(scene.pointerX, scene.pointerY);
+
+if(pick.hit && pick.pickedMesh){
+
+let picked = pick.pickedMesh;
+
+while(picked.parent && !(picked instanceof BABYLON.TransformNode)){
+picked = picked.parent;
+}
+
+selectedMesh = picked;
+gizmoManager.attachToMesh(selectedMesh);
+
+}else{
+
+selectedMesh = null;
+gizmoManager.attachToMesh(null);
+
+}
+
+}
+
+});
 
 return scene;
 
 };
+createScene().then(scene=>{
 
-createScene();
+engine.runRenderLoop(()=>{
+scene.render();
+});
+
+});
+
+
+window.addEventListener("resize",()=>{
+engine.resize();
+});
+
+// 모델 추가
+document.getElementById("modelSelect").addEventListener("change", async function(){
+
+if(!this.value) return;
+
+const result = await BABYLON.SceneLoader.ImportMeshAsync(
+"",
+"./",
+this.value,
+scene
+);
+
+const root = new BABYLON.TransformNode("root", scene);
+
+result.meshes.forEach(m=>{
+if(m !== result.meshes[0]){
+m.parent = root;
+}
+});
+
+root.position = new BABYLON.Vector3(0,0,0);
+
+objects.push(root);
+
+});
+
+
+/* 삭제 */
+
+document.getElementById("deleteBtn").addEventListener("click", ()=>{
+
+if(!selectedMesh) return;
+
+selectedMesh.dispose();
+
+objects = objects.filter(o=>o !== selectedMesh);
+
+selectedMesh = null;
+
+gizmoManager.attachToMesh(null);
+
+});
+
+
+/* 📸 이미지 캡처 */
+
+document.getElementById("captureBtn").addEventListener("click", ()=>{
+
+BABYLON.Tools.CreateScreenshotUsingRenderTarget(
+engine,
+camera,
+{ width: 1920, height: 1080 },
+function(data){
+const link = document.createElement("a");
+link.href = data;
+link.download = "scene.png";
+link.click();
+}
+);
+
+});
 
 
 // 렌더 루프
