@@ -92,7 +92,11 @@ if(pick.hit && pick.pickedMesh){
 let picked = pick.pickedMesh;
 
 // root까지 올라가기
-while(picked.parent && picked.parent instanceof BABYLON.TransformNode){
+//while(picked.parent && picked.parent instanceof BABYLON.TransformNode){
+//picked = picked.parent;
+//}
+  // 🔥 핵심: root까지 정확히 올라가기
+while(picked.parent && picked.parent.name === "modelRoot"){
 picked = picked.parent;
 }
 
@@ -127,7 +131,7 @@ const bounding=selectedMesh.getHierarchyBoundingVectors();
 const size=bounding.max.subtract(bounding.min);
 
 sizeLabel.text=
-`-가로: ${(size.x*100).toFixed(1)} cm   `+
+`가로: ${(size.x*100).toFixed(1)} cm   `+
 `세로: ${(size.z*100).toFixed(1)} cm   `+
 `높이: ${(size.y*100).toFixed(1)} cm`;
 
@@ -149,7 +153,7 @@ async function loadModel(source){
 
 let result;
 
-if(source instanceof File){
+//if(source instanceof File){
 
 result = await BABYLON.SceneLoader.ImportMeshAsync(
 "",
@@ -158,16 +162,16 @@ source,
 scene
 );
 
-}else{
+//}else{
 
-result = await BABYLON.SceneLoader.ImportMeshAsync(
-"",
-"",
-source,
-scene
-);
-
-}
+//result = await BABYLON.SceneLoader.ImportMeshAsync(
+//"",
+//"",
+//source,
+//scene
+//);
+//
+//}
 
 // 🔥 root 생성 (개별 관리)
 const root=new BABYLON.TransformNode("modelRoot",scene);
@@ -179,9 +183,9 @@ mesh.setParent(root);
 });
 
 // 위치 초기화
-root.position=new BABYLON.Vector3(0,0,0);
+//root.position=new BABYLON.Vector3(0,0,0);
 
-// 목록에 추가
+// 목록에 추가 배열에 저장
 objects.push(root);
 
 // 마지막 추가된 것 선택
